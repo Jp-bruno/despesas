@@ -1,16 +1,17 @@
+import { useGetUser } from "@/hooks/usersHooks";
 import Router from "next/router";
 import { ReactNode, createContext, useState, useEffect, useCallback } from "react";
 
 type AuthContextType = {
     authUser: ({ email, senha }: { email: string, senha: string }) => void
     logOff: () => void,
-    isAuth: boolean
+    isAuth: false | any,
 }
 
 export const AuthContext = createContext({} as AuthContextType)
 
 export default function AuthContextProvider({ children }: { children: ReactNode }) {
-    const [isAuth, setAuthState] = useState(false);
+    const [isAuth, setAuthState] = useState<null | any>(null);
 
     async function authUser({ email, senha }: { email: string; senha: string }) {
         const result = await fetch("http://localhost:4000/users/authUser", {
@@ -23,9 +24,8 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         }).then((res) => res.json());
 
         if (!result.error) {
-            setAuthState(true);
-            localStorage.setItem("user", JSON.stringify(result.data));
-            Router.replace("/auth/home");
+            setAuthState(result.data);
+            Router.replace("/auth/home")
         }
     }
 
@@ -33,8 +33,7 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         const result = await fetch("http://localhost:4000/users/logOff", {
             credentials: "include",
         }).then((res) => res.json());
-        localStorage.removeItem("user");
-        setAuthState(false);
+        setAuthState(null);
         Router.replace("/");
     }
 
@@ -48,7 +47,7 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         ).then(res => res.json())
 
         if (response.isAuth) {
-            return true
+            return response.isAuth
         }
 
         return false
@@ -59,19 +58,18 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
             const isServerSideAuth = await verifyAuth();
 
             if (Router.pathname !== "/" && isServerSideAuth) {
-                setAuthState(true);
+                setAuthState(isServerSideAuth);
                 return
             }
 
             if (Router.pathname === "/" && isServerSideAuth) {
-                setAuthState(true)
+                setAuthState(isServerSideAuth)
                 Router.replace("/auth/home")
                 return
             }
 
             if (Router.pathname !== "/" && !isServerSideAuth) {
-                setAuthState(false)
-                localStorage.removeItem("user")
+                setAuthState(null)
                 Router.replace("/")
                 return
             }
