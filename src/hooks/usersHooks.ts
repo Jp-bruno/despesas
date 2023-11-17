@@ -10,7 +10,23 @@ async function createUser({ nome, email }: { nome: string; email: string }) {
     },
   }).then((res) => res.json());
 
-  return result
+  return result;
+}
+
+async function getAllUsers() {
+  const result = await fetch("http://localhost:4000/users", {
+    credentials: "include",
+  }).then((res) => res.json());
+
+  return result;
+}
+
+async function getUser({ userId }: { userId: string }) {
+  const result = await fetch(`http://localhost:4000/users/${userId}`, {
+    credentials: "include",
+  }).then((res) => res.json());
+
+  return result;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -21,3 +37,17 @@ export const useCreateUser = () => {
   });
 };
 
+export const useGetAllUsers = () => {
+  return useQuery({
+    queryKey: ["all-users"],
+    queryFn: getAllUsers,
+  });
+};
+
+export const useGetUser = (userId:string) => {
+
+  return useQuery({
+    queryKey: [`user-${userId}`],
+    queryFn: () => getUser({userId}),
+  });
+}
