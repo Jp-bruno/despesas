@@ -3,7 +3,7 @@ import { Box, Collapse, ListItemButton, ListItemText, Typography } from "@mui/ma
 import { useState } from "react";
 
 
-export default function DepositHistoryListItem() {
+export default function DepositHistoryListItem({ responsable, date, value }: { responsable: string, date: Date, value: string }) {
     const [open, setOpen] = useState(false);
 
     const handleClick = () => {
@@ -13,14 +13,15 @@ export default function DepositHistoryListItem() {
     return (
         <>
             <ListItemButton onClick={handleClick}>
-                <ListItemText primary="R$ 500,00" />
+                <ListItemText primary={`R$ ${value}`} />
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box p={2}>
-                    <Typography>Responsável: Kátia Fugazza</Typography>
-                    <Typography>Data: 19/10/2023</Typography>
-                    <Typography>Hora: 19:30</Typography>
+                    <Typography>Responsável: {responsable}</Typography>
+                    <Typography>Valor: {value}</Typography>
+                    <Typography>Data: {date.toLocaleDateString('pt-BR')}</Typography>
+                    <Typography>Hora: {date.toLocaleTimeString('pt-BR')}</Typography>
                 </Box>
             </Collapse>
         </>

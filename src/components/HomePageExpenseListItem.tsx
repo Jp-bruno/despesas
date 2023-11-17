@@ -3,7 +3,7 @@ import { Box, Collapse, ListItemButton, ListItemText, Typography } from "@mui/ma
 import { useState } from "react";
 
 
-export default function HomePageExpenseListItem() {
+export default function HomePageExpenseListItem({ responsable, title, date, value }: { responsable: string, title: string, date: Date, value: string }) {
     const [open, setOpen] = useState(false);
 
     const handleClick = () => {
@@ -18,9 +18,9 @@ export default function HomePageExpenseListItem() {
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box p={2}>
-                    <Typography>Data: 19/10/2023</Typography>
-                    <Typography>Hora: 19:30</Typography>
-                    <Typography>Valor: R$ 4,30</Typography>
+                    <Typography>Data: {date.toLocaleDateString('pt-BR')}</Typography>
+                    <Typography>Hora: {date.toLocaleTimeString('pt-BR')}</Typography>
+                    <Typography>Valor: R$ {value}</Typography>
                 </Box>
             </Collapse>
         </>
